@@ -1,4 +1,4 @@
-# Ruby PLC Structured Text to PLCopen XML Translator Library
+# PLC Structured Text to PLCopen XML Translator
 
 This project implements a minimal parser in ruby for PLC structured text programs.
 It supports a large number of language features, with the exception of 
@@ -9,7 +9,7 @@ It supports a large number of language features, with the exception of
 - custom types or aliases
 
 If you need something more complete and with stronger correctness guarantees, you
-may be better off writing a layer around the (rusty)[https://github.com/PLC-lang/rusty] 
+may be better off writing a layer around the [rusty](https://github.com/PLC-lang/rusty)
 parser, but this script should be fine for most tasks, works in a UNIXy way, is a single 
 file, is written in Ruby, and is around 1/20th of the size in LoC.
 
