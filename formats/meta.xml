@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://www.plcopen.org/xml/tc6_0200">
+  <fileHeader companyName="WAGO" productName="e!COCKPIT" productVersion="e!COCKPIT" creationDateTime="2022-06-27T09:59:55.2745601" />
+  <contentHeader name="project.ecp" modificationDateTime="2022-06-27T09:59:23.0778894">
+    <coordinateInfo>
+      <fbd>
+        <scaling x="1" y="1" />
+      </fbd>
+      <ld>
+        <scaling x="1" y="1" />
+      </ld>
+      <sfc>
+        <scaling x="1" y="1" />
+      </sfc>
+    </coordinateInfo>
+    <addData>
+      <data name="http://www.3s-software.com/plcopenxml/projectinformation" handleUnknown="implementation">
+        <ProjectInformation />
+      </data>
+    </addData>
+  </contentHeader>
+  <types>
+    <dataTypes>
+      <dataType name="strct">
+        <baseType>
+          <struct>
+            <variable name="vari">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </struct>
+        </baseType>
+        <addData />
+      </dataType>
+      <dataType name="enu">
+        <baseType>
+          <enum>
+            <values>
+              <value name="enum_member" value="0" />
+            </values>
+          </enum>
+        </baseType>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/attributes" handleUnknown="implementation">
+            <Attributes>
+              <Attribute Name="qualified_only" Value="" />
+              <Attribute Name="strict" Value="" />
+            </Attributes>
+          </data>
+        </addData>
+      </dataType>
+    </dataTypes>
+    <pous>
+      <pou name="function_blk" pouType="functionBlock">
+        <interface>
+          <inputVars>
+            <variable name="inVar">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </inputVars>
+          <localVars>
+            <variable name="vari">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </localVars>
+          <outputVars>
+            <variable name="outVar">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </outputVars>
+          <inOutVars>
+            <variable name="inOut">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </inOutVars>
+          <tempVars>
+            <variable name="inOut">
+              <type>
+                <INT />
+              </type>
+            </variable>
+          </tempVars>
+          <returnType>
+            <wstring />
+          </returnType>
+        </interface>
+        <body>
+          <ST>
+            <xhtml xmlns="http://www.w3.org/1999/xhtml" />
+          </ST>
+        </body>
+        <addData />
+      </pou>
+    </pous>
+  </types>
+  <instances>
+    <configurations />
+  </instances>
+  <addData>
+    <data name="http://www.3s-software.com/plcopenxml/globalvars" handleUnknown="implementation">
+      <globalVars name="GVL">
+        <variable name="myGlobal">
+          <type>
+            <INT />
+          </type>
+        </variable>
+        <addData>
+          <data name="http://www.3s-software.com/plcopenxml/attributes" handleUnknown="implementation">
+            <Attributes>
+              <Attribute Name="qualified_only" Value="" />
+            </Attributes>
+          </data>
+        </addData>
+      </globalVars>
+    </data>
+  </addData>
+</project>
