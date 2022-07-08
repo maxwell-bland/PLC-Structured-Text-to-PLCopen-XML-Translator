@@ -59,15 +59,18 @@ class ECockpitTags
 
     def change_type_tag(tag, variable)
         type = variable[:type]
-        dimension = variable[:dimensions]
+        dimensions = variable[:dimensions]
         @parser.remove_all_inner_tags(tag)
         if type.split(" ")[0] == "ARRAY"
             # create array type tags
             new_type_tag = @parser.create_xml_element("array", {}, "")
-            dimension_tag = @parser.create_xml_element("dimension", {
-                "lower" => dimension[0][0], "upper" => dimension[0][1]
-            }, "")
-            new_type_tag.add_element(dimension_tag)
+
+            dimensions.each do |dimension|
+                dimension_tag = @parser.create_xml_element("dimension", {
+                    "lower" => dimension[0], "upper" => dimension[1]
+                }, "")
+                new_type_tag.add_element(dimension_tag)
+            end
             baseType_tag = @parser.create_xml_element("baseType", {}, "")
             baseType_tag.add_element(
                 @parser.create_xml_element(type.split(" ")[1], {}, "")
@@ -75,8 +78,8 @@ class ECockpitTags
             new_type_tag.add_element(baseType_tag)
         elsif type == "STRING"
             attributes = {}
-            if dimension
-                attributes["length"] = dimension[0]
+            if dimensions
+                attributes["length"] = dimensions[0]
             end
             new_type_tag = @parser.create_xml_element("string", attributes, "")
         else
@@ -86,7 +89,7 @@ class ECockpitTags
     end
 
     def add_value_tag(tag, value, type)
-        new_value_tag = @parser.create_xml_element("initialValue", {}, value)
+        new_value_tag = @parser.create_xml_element("initialValue", {}, "")
 
         # if the type is not an ARRAY, then add a simple value with a value equal to the value
         if type.split(" ")[0] != "ARRAY"
@@ -95,9 +98,21 @@ class ECockpitTags
         else
             arrayValue_tag = @parser.create_xml_element("arrayValue", {}, "")
             new_value_tag.add_element(arrayValue_tag)
-            array_values = value.gsub(/[\[\]]/, "").split(",").map(&:strip)
-            array_values.each do |array_value|
-                arrayValue_tag.add_element(@parser.create_xml_element("simpleValue", {"value" => array_value}, ""))
+            # check if the value is a repetition value matching [\d(\w+)]
+            # TODO: move this to st_parser.py
+            if value.match(/\[\d+\(\w+\)\]/)
+                val_tag = @parser.create_xml_element("value", {
+                    "repetitionValue" => value.match(/\[(\d+)\(\w+\)\]/)[1]
+                    }, "")
+                val_tag.add_element(@parser.create_xml_element("simpleValue", {
+                    "value" => value.match(/\[\d+\((\w+)\)\]/)[1]
+                    }, ""))
+                arrayValue_tag.add_element(val_tag)
+            else
+                array_values = value.gsub(/[\[\]]/, "").split(",").map(&:strip)
+                array_values.each do |array_value|
+                    arrayValue_tag.add_element(@parser.create_xml_element("simpleValue", {"value" => array_value}, ""))
+                end
             end
         end
         
@@ -193,8 +208,12 @@ class ECockpitTags
         populate_variable_list(var, variables)
         var.add_element(add_data)
 
+        st_body[:attributes].each do |attribute|
+            #lowercase the attribute name
+            var.add_attribute(attribute.downcase, "true")
+        end
+
         @globalVars_parent.add_element(var)
-        @globalVars_root.add_element(@globalVars_parent)
         root = @parser.get_element_by_path("/project")
 
         @parser.add_element(root, @globalVars_root)
@@ -204,3 +223,5 @@ class ECockpitTags
         @parser.write_to_file(file)
     end
 end
+
+ECockpitTags.new

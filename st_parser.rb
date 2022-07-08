@@ -54,7 +54,12 @@ end
 
 def parse_component_attributes(type, body, res)
     if type == "VAR_GLOBAL"
-        res[:body] = body.strip
+        # the first line consists of attributes that should be 
+        # set to true for the globals
+        res[:attributes] = body.split("\n")[0].split(" ").map {|a| a.strip}
+        res[:body] = body.split("\n")[1..-1].join("\n")
+        res[:name] = "globalVars_#{$global_var_cnt}"
+        $global_var_cnt += 1
     elsif body != nil
         parse_component_first_line_from_body(type, body, res)
 
@@ -64,7 +69,7 @@ def parse_component_attributes(type, body, res)
             return_type_index = body.index(res[:return_type][:str])
             # remove everything before the return type
             if return_type_index != nil
-                body = body[return_type_index + res[:return_type].length..-1].strip 
+                body = body[return_type_index + res[:return_type].length + 1..-1].strip 
             end
         # if body matches "(...)" then it is an enum
         elsif body.match(/^:\s*\(.*?\);$/)
@@ -101,17 +106,17 @@ def parse_variable(variable, res)
         var_type = var_type.split("[")[0]
         # if there is a dimension, parse it out
         if var_type.include?("[")
-            dimensions = [variable.split("[")[1].split("]")[0].to_i]
+            dimensions = [variable.split("[")[1].split("]")[0]]
         end
     # otherwise check if it is an array, where the dimensions are represented as 
-    # ARRAY[x0..xn] OF type
-    # Note: we do not support multi-dimensional arrays or arrays of strings
+    # ARRAY[x0..xn,y0..yn] OF type
+    # Note: we do not support arrays of strings
     elsif var_type.include?("ARRAY")
         var_type = "ARRAY #{var_type.split("]")[1].split("OF")[1].strip}"
-        dimensions = variable.split("[")[1].split("]")[0].split(/\s+/).map {|ds| 
-            ds = ds.strip.split("..")
-            [ds[0].to_i, ds[1].to_i]
-        }
+
+        dims = variable.match(/\[(.*?)\]/)[1]
+        # split the dims on the ","
+        dimensions = dims.split(",").map {|d| d.strip.split("..").map {|i| i.strip}}
     end
 
     value = nil
@@ -163,7 +168,10 @@ def handle_component(component_name, component_body)
     return res
 end
 
+# Kept just in case multiple global var blocks are used
+$global_var_cnt = 0
 def parse_st_bodies(str)
+    $global_var_cnt = 0
     parsed_bodies = []
     remainder, bodies = remove_delimited_substrings(str, $component_type_delimiters)
 
